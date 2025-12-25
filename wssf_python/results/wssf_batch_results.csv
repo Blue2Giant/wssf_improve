@@ -1,0 +1,2 @@
+pair_id,img1,img2,gt_txt,n_inliers,inlier_rmse_px,mse_matrix,mse_sar50,out_dir
+1,pair1_1.jpg,pair1_2.jpg,gt_1.txt,4,1.144678,9550098.129144,1869172832.954731,/Users/leolan/Downloads/WorkSpace/wssf_improve/wssf_python/results/batch/pair_1

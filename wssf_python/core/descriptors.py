@@ -93,6 +93,9 @@ def calc_log_polar_descriptor(gradient, angle, x, y, main_angle, d, n, path_bloc
     """
     cos_t = np.cos(-main_angle / 180 * np.pi)
     sin_t = np.sin(-main_angle / 180 * np.pi)
+    # 强制使用整数坐标，避免边界切片为空
+    x = int(np.round(x))
+    y = int(np.round(y))
     
     M, N = gradient.shape
     radius = round(path_block)
@@ -106,6 +109,8 @@ def calc_log_polar_descriptor(gradient, angle, x, y, main_angle, d, n, path_bloc
     # Extract sub-regions
     sub_gradient = gradient[radius_y_up:radius_y_down+1, radius_x_left:radius_x_right+1]
     sub_angle = angle[radius_y_up:radius_y_down+1, radius_x_left:radius_x_right+1]
+    if sub_gradient.size == 0 or sub_angle.size == 0:
+        return np.zeros((circle_count * d + 1) * n, dtype=np.float64)
     
     # Adjust angles relative to main orientation
     sub_angle = np.round((sub_angle - main_angle) * n / 360)
@@ -113,8 +118,10 @@ def calc_log_polar_descriptor(gradient, angle, x, y, main_angle, d, n, path_bloc
     sub_angle[sub_angle == 0] = n
     
     # Create coordinate grid
-    X = np.arange(-(x - radius_x_left), (radius_x_right - x) + 1)
-    Y = np.arange(-(y - radius_y_up), (radius_y_down - y) + 1)
+    X = np.arange(-(x - radius_x_left), (radius_x_right - x) + 1, dtype=np.int64)
+    Y = np.arange(-(y - radius_y_up), (radius_y_down - y) + 1, dtype=np.int64)
+    if X.size == 0 or Y.size == 0:
+        return np.zeros((circle_count * d + 1) * n, dtype=np.float64)
     XX, YY = np.meshgrid(X, Y)
     
     # Rotate coordinates
@@ -133,6 +140,8 @@ def calc_log_polar_descriptor(gradient, angle, x, y, main_angle, d, n, path_bloc
     log_angle[log_angle > d] -= d
     
     # Quantize amplitudes
+    if log_amplitude.size == 0:
+        return np.zeros((circle_count * d + 1) * n, dtype=np.float64)
     radius = np.max(log_amplitude)
     if circle_count == 2:
         r1 = radius * 0.25 * 0.73

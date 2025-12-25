@@ -1,0 +1,5 @@
+pair_id=173
+inliers=4
+inlier_RMSE_px=0.412272
+MSE_matrix=117684.182757
+MSE_points_50=734428886923.332764
